@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import axios from "axios";
-import logo from './logo.svg';
 import './App.css';
 
-class App extends React.Component {
+class App extends Component {
   state = {
     followers: []
   }
@@ -30,7 +29,15 @@ class App extends React.Component {
       <div className="App">
         <div>
           {this.state.followers.map(follower => (
-          <p key={follower.id}>{follower.login}</p>
+            <div key={follower.id} className="followerContainer">
+              <div className="followerAvatar">
+                <img src={follower.avatar_url} alt="user's avatar"/>
+              </div>
+              <div className="followerDetails">
+                <p>{follower.login}</p>
+                <p><a rel="noopener noreferrer" target="_blank" href={follower.html_url}>{follower.html_url}</a></p>
+              </div>
+            </div>
           ))}
         </div>
         
