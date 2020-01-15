@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { Row, Col, Card, CardImg, CardSubtitle, CardTitle, CardBody, CardLink} from "reactstrap";
+import { Button, FormGroup, Label, Input, Row, Card, CardImg, CardSubtitle, CardTitle, CardBody, CardLink} from "reactstrap";
 import axios from "axios";
 import './App.css';
 
 class App extends Component {
   state = {
-    followers: []
+    followers: [],
+    searchText: "",
+    user: "phongdottech"
   }
 
   componentDidMount() {
@@ -14,7 +16,7 @@ class App extends Component {
     .get(`https://api.github.com/users/PHONGdotTech/followers`)
     .then(res => {
       console.log(res)
-      console.log("set state data followers to the response.data")
+      console.log("because component did mount, setState followers to the response.data")
       this.setState({
         followers: res.data
       })
@@ -25,11 +27,51 @@ class App extends Component {
     })
   }
 
+  handleChanges = e => {
+    this.setState({
+      searchText: e.target.value
+    });
+  };
+
+
+  handleSubmit = e => {
+    e.preventDefault();
+    if (this.state.searchText === "") {
+      console.log("search button was clicked, but no user was entered in search field. no axios call")
+    }else {
+      axios
+      .get(`https://api.github.com/users/${this.state.searchText}/followers`)
+      .then(res => {
+        this.setState({
+          followers: res.data,
+          user: this.state.searchText
+        })
+      })
+      .catch(err => console.log(err));
+      }
+  }
+
   render() {
     console.log("app rendered")
     
     return (
       <div className="App">
+        
+        <FormGroup className="searchform">
+          <Label for="search">Enter a GitHub User's Profile Name</Label>
+          <span className="searchformtextbutton">
+            <Input
+            onChange={this.handleChanges}
+            className="searchinput"
+            type="search"
+            name="search"
+            id="search"
+            placeholder="type a name to search"
+            />
+            <Button onClick={this.handleSubmit} title="Shows searched user's followers">Show followers!</Button>
+          </span>
+        </FormGroup>
+        <p>Currently displaying {this.state.user}'s followers.</p>
         <Row className="row">
           {this.state.followers.map(follower => (
             <Card className="card" body inverse color="info" key={follower.id}>
